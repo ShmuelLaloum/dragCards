@@ -5,7 +5,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useProducts } from "./useProducts";
 import type { CardsState, ColumnType } from "../types/type";
 
@@ -59,12 +59,15 @@ export function useKanbanBoard() {
     }
   }, [data]);
 
-  function findSourceColumn(productId: number): ColumnType {
-    if (cardsState.available.some((p) => p.id === productId))
-      return "available";
-    if (cardsState.selected.some((p) => p.id === productId)) return "selected";
-    return "favorites";
-  }
+  const productLocationMap = useMemo(() => {
+    const map = new Map<number, ColumnType>();
+
+    cardsState.available.forEach((p) => map.set(p.id, "available"));
+    cardsState.selected.forEach((p) => map.set(p.id, "selected"));
+    cardsState.favorites.forEach((p) => map.set(p.id, "favorites"));
+
+    return map;
+  }, [cardsState]);
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -73,10 +76,10 @@ export function useKanbanBoard() {
     const product = active.data.current?.product;
     if (!product) return;
 
-    const sourceColumn = findSourceColumn(product.id);
+    const sourceColumn = productLocationMap.get(product.id);
     const targetColumn = over.id as ColumnType;
 
-    if (sourceColumn === targetColumn) return;
+    if (!sourceColumn || sourceColumn === targetColumn) return;
 
     setCardsState((prev) => {
       const newState = { ...prev };

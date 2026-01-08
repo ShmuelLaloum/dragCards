@@ -11,7 +11,7 @@ export default function Column({ id, title, items }: ColumnProps) {
       ref={setNodeRef}
       className={`column-card ${isOver ? "column-card-over" : ""}`}
       style={{
-        backgroundColor: isOver ? "#e6f7ff" : undefined, 
+        backgroundColor: isOver ? "#e6f7ff" : undefined,
         borderColor: isOver ? "#1890ff" : undefined,
       }}
       title={
@@ -21,9 +21,13 @@ export default function Column({ id, title, items }: ColumnProps) {
       }
     >
       <div className="column-card-body">
-        {items.map((item) => (
-          <ProductCard key={item.id} product={item} />
-        ))}
+        {items.length === 0 ? (
+          <Typography.Text type="secondary">
+            No items in this column
+          </Typography.Text>
+        ) : (
+          items.map((item) => <ProductCard key={item.id} product={item} />)
+        )}
       </div>
     </Card>
   );

@@ -1,6 +1,7 @@
 import { Input, Button } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDebounce } from "../hooks/useDebounce";
 
 interface SearchSectionProps {
   onSearch: (searchTerm: string) => void;
@@ -8,6 +9,11 @@ interface SearchSectionProps {
 
 export default function SearchSection({ onSearch }: SearchSectionProps) {
   const [searchInput, setSearchInput] = useState("");
+  const debouncedSearchTerm = useDebounce(searchInput, 300);
+
+  useEffect(() => {
+    onSearch(debouncedSearchTerm);
+  }, [debouncedSearchTerm, onSearch]);
 
   const handleSearch = () => {
     onSearch(searchInput);
@@ -19,14 +25,7 @@ export default function SearchSection({ onSearch }: SearchSectionProps) {
         placeholder="Search available products..."
         size="large"
         value={searchInput}
-        onChange={(e) => {
-          const newValue = e.target.value;
-          setSearchInput(newValue);
-
-          if (newValue === "") {
-            onSearch("");
-          }
-        }}
+        onChange={(e) => setSearchInput(e.target.value)}
         onPressEnter={handleSearch}
         allowClear
       />

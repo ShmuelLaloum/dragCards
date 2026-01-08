@@ -7,6 +7,7 @@ import SearchSection from "../components/SearchSection";
 import { DndContext } from "@dnd-kit/core";
 import { useKanbanBoard } from "../hooks/useKanbanBoard";
 import type { ColumnType } from "../types/type";
+import type {Product}from "../types/type";
 
 export default function Dashboard() {
   const { cardsState, handleDragEnd, sensors, isLoading, error, refetch } =
@@ -23,7 +24,7 @@ export default function Dashboard() {
   const columns: {
     id: ColumnType;
     title: string;
-    items: typeof filteredAvailable;
+    items: Product[];
   }[] = [
     {
       id: "available",
